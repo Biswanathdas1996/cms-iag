@@ -6,8 +6,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { TreeView, TreeItem } from "@material-ui/lab";
 import { Button } from "@material-ui/core";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
+import Stack from "@mui/material/Stack";
 import { get, post } from "../helper/apiHelper";
+import swal from "sweetalert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,37 +24,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const jsonData = {
-  brand_name: "ANZ",
-  data: {
-    dashboard: {
-      view_policy_button: "View Policy",
-      view_renewal_button: "Renewal Policy",
-    },
-    policy_details: {
-      policy_banner: "View Policy banner",
-      view_renewal_button: "Renewal Policy",
-    },
-  },
-};
-
 const JsonEditor = () => {
   const classes = useStyles();
-  const [editedJsonData, setEditedJsonData] = useState(jsonData || {});
+  const [editedJsonData, setEditedJsonData] = useState({});
 
   const [brand, setBrand] = useState("NRMA");
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
+    setLoading(true);
     const response = await post("/get-data", {
       brand_name: brand,
     });
     setEditedJsonData(response);
     console.log("==response==>", response);
+    setLoading(false);
   };
 
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [brand]);
 
   const handleChange = (event, nodeIds) => {
     const editedData = { ...editedJsonData };
@@ -84,7 +74,8 @@ const JsonEditor = () => {
     console.log("------", requestData);
     const response = await post("/save-data", requestData);
     if (response) {
-      alert("data updated");
+      swal("Updated!", "data updated!", "success");
+      fetchData();
     }
   };
 
@@ -108,6 +99,14 @@ const JsonEditor = () => {
             value={node}
             onChange={(event) => handleChange(event, currentNodeIds)}
             className={classes.input}
+            style={{
+              padding: 7,
+              margin: 5,
+              width: "97%",
+              background: "#8080801c",
+              borderRadius: 6,
+              border: "1px solid grey",
+            }}
           />
         </TreeItem>
       );
@@ -122,24 +121,50 @@ const JsonEditor = () => {
             position: "relative",
             borderRadius: 12,
             padding: "2.5rem",
+            margin: "2.5rem",
           }}
         >
-          <div className={classes.root}>
-            <TreeView
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+          <Stack spacing={2} direction="row" style={{ marginBottom: 25 }}>
+            <Button
+              variant={brand === "NRMA" ? "contained" : "outlined"}
+              onClick={() => setBrand("NRMA")}
             >
-              {renderTree(editedJsonData)}
-            </TreeView>
-            <br />
-            <br />
-            <br />
-            <div className={classes.form}>
-              <Button variant="contained" color="primary" onClick={handleSave}>
-                Save
-              </Button>
+              NRMA
+            </Button>
+            <Button
+              variant={brand === "ANZ" ? "contained" : "outlined"}
+              onClick={() => setBrand("ANZ")}
+            >
+              ANZ
+            </Button>
+          </Stack>
+
+          {!loading ? (
+            <div className={classes.root}>
+              <TreeView
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+              >
+                {renderTree(editedJsonData)}
+              </TreeView>
+              <br />
+              <br />
+              <br />
+              <div className={classes.form}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <center>
+              <div className="loader"></div>
+            </center>
+          )}
         </Card>
       </Grid>
     </Grid>

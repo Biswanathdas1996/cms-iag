@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Route, Routes, Link } from "react-router-dom";
 
-const pages = ["Home", "Uploaded Data", "Blog"];
+const pages = ["Home"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
@@ -118,23 +118,6 @@ function ResponsiveAppBar() {
             <Button sx={{ my: 2, color: "white", display: "block" }}>
               <Link to="/" className="header-link">
                 Home
-              </Link>
-            </Button>
-            <Button sx={{ my: 2, color: "white", display: "block" }}>
-              <Link to="/csv-data" className="header-link">
-                {" "}
-                Uploaded Data
-              </Link>
-            </Button>
-            <Button sx={{ my: 2, color: "white", display: "block" }}>
-              <Link to="/search" className="header-link">
-                {" "}
-                Search
-              </Link>
-            </Button>
-            <Button sx={{ my: 2, color: "white", display: "block" }}>
-              <Link to="/sql-data" className="header-link">
-                Last Search
               </Link>
             </Button>
           </Box>
