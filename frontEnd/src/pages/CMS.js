@@ -166,6 +166,40 @@ const JsonEditor = () => {
             </center>
           )}
         </Card>
+
+        <Card
+          style={{
+            zIndex: 10,
+            position: "relative",
+            borderRadius: 12,
+            padding: "2.5rem",
+            margin: "2.5rem",
+          }}
+        >
+          <h4>Intigration Details</h4>
+          <pre>
+            <code>
+              {`var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "brand_name": "ANZ"
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("https://iag-cms-backend.azurewebsites.net/get-data", requestOptions)
+  .then(response => response.json())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));`}
+            </code>
+          </pre>
+        </Card>
       </Grid>
     </Grid>
   );
