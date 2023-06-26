@@ -1,0 +1,28 @@
+body {
+  display: block;
+  margin: 0px;
+}
+
+h1{
+    color: #D85604
+}
+
+button {
+    background-color: #808B96 ;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 2px;
+    cursor: pointer;
+  }
+
+
+.header-link {
+  color: white;
+  text-decoration: none;
+  }
+
