@@ -32,17 +32,6 @@ function App() {
   return (
     <>
       <Header />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          margin: "2rem",
-        }}
-      >
-        <Link to="/" className="header-link">
-          Home
-        </Link>
-      </div>
 
       <Routes>
         <Route exact path="/" element={<CMS />} />

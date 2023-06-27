@@ -9,7 +9,10 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Stack from "@mui/material/Stack";
 import { get, post } from "../helper/apiHelper";
 import swal from "sweetalert";
-
+import Chip from "@mui/material/Chip";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import Alert from "@mui/material/Alert";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -30,6 +33,7 @@ const JsonEditor = () => {
 
   const [brand, setBrand] = useState("NRMA");
   const [loading, setLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -79,21 +83,51 @@ const JsonEditor = () => {
     }
   };
 
-  const renderTree = (data, nodeIds = []) => {
+  const handleCopy = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to copy text: ", error);
+    }
+  };
+
+  const renderTree = (data, nodeIds = [], path = "") => {
     return Object.keys(data).map((key) => {
       const node = data[key];
       const currentNodeIds = [...nodeIds, key];
+      const currentPath = path ? `${path}.${key}` : key;
 
       if (typeof node === "object" && node !== null) {
         return (
-          <TreeItem key={key} nodeId={currentNodeIds.join("-")} label={key}>
-            {renderTree(node, currentNodeIds)}
+          <TreeItem
+            key={key}
+            nodeId={currentNodeIds.join("-")}
+            label={currentPath}
+          >
+            {renderTree(node, currentNodeIds, currentPath)}
           </TreeItem>
         );
       }
 
       return (
         <TreeItem key={key} nodeId={currentNodeIds.join("-")} label={key}>
+          <Chip
+            icon={<AccountTreeIcon />}
+            label={currentPath}
+            style={{
+              fontSize: 11,
+              marginTop: 5,
+              float: "right",
+            }}
+            onClick={() => handleCopy(currentPath)}
+            color="primary"
+            variant="outlined"
+          />
+
           <input
             name={key}
             value={node}
@@ -113,73 +147,77 @@ const JsonEditor = () => {
     });
   };
   return (
-    <Grid container spacing={3} mb={3}>
-      <Grid item xs={12} md={12} lg={12}>
-        <Card
-          style={{
-            zIndex: 10,
-            position: "relative",
-            borderRadius: 12,
-            padding: "2.5rem",
-            margin: "2.5rem",
-          }}
-        >
-          <Stack spacing={2} direction="row" style={{ marginBottom: 25 }}>
-            <Button
-              variant={brand === "NRMA" ? "contained" : "outlined"}
-              onClick={() => setBrand("NRMA")}
-            >
-              NRMA
-            </Button>
-            <Button
-              variant={brand === "ANZ" ? "contained" : "outlined"}
-              onClick={() => setBrand("ANZ")}
-            >
-              ANZ
-            </Button>
-          </Stack>
-
-          {!loading ? (
-            <div className={classes.root}>
-              <TreeView
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
+    <>
+      {isCopied && <Alert severity="success">Path copied!</Alert>}
+      <Grid container spacing={3} mb={3} style={{ marginTop: 0 }}>
+        <Grid item xs={12} md={12} lg={12} style={{ marginTop: 0 }}>
+          <Card
+            style={{
+              zIndex: 10,
+              position: "relative",
+              borderRadius: 12,
+              padding: "2.5rem",
+              margin: "2.5rem",
+              marginTop: 0,
+            }}
+          >
+            <Stack spacing={2} direction="row" style={{ marginBottom: 25 }}>
+              <Button
+                variant={brand === "NRMA" ? "contained" : "outlined"}
+                onClick={() => setBrand("NRMA")}
               >
-                {renderTree(editedJsonData)}
-              </TreeView>
-              <br />
-              <br />
-              <br />
-              <div className={classes.form}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <center>
-              <div className="loader"></div>
-            </center>
-          )}
-        </Card>
+                NRMA
+              </Button>
+              <Button
+                variant={brand === "ANZ" ? "contained" : "outlined"}
+                onClick={() => setBrand("ANZ")}
+              >
+                ANZ
+              </Button>
+            </Stack>
 
-        <Card
-          style={{
-            zIndex: 10,
-            position: "relative",
-            borderRadius: 12,
-            padding: "2.5rem",
-            margin: "2.5rem",
-          }}
-        >
-          <h4>Intigration Details</h4>
-          <pre>
-            <code>
-              {`var myHeaders = new Headers();
+            {!loading ? (
+              <div className={classes.root}>
+                <TreeView
+                  defaultCollapseIcon={<ExpandMoreIcon />}
+                  defaultExpandIcon={<ChevronRightIcon />}
+                >
+                  {renderTree(editedJsonData)}
+                </TreeView>
+                <br />
+                <br />
+                <br />
+                <div className={classes.form}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSave}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <center>
+                <div className="loader"></div>
+              </center>
+            )}
+          </Card>
+
+          <Card
+            style={{
+              zIndex: 10,
+              position: "relative",
+              borderRadius: 12,
+              padding: "2.5rem",
+              margin: "2.5rem",
+              marginTop: 0,
+            }}
+          >
+            <h4>Intigration Details</h4>
+            <pre>
+              <code>
+                {`var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 
 var raw = JSON.stringify({
@@ -197,11 +235,12 @@ fetch("https://iag-cms-backend.azurewebsites.net/get-data", requestOptions)
   .then(response => response.json())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));`}
-            </code>
-          </pre>
-        </Card>
+              </code>
+            </pre>
+          </Card>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 
