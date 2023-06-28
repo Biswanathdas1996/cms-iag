@@ -45,5 +45,13 @@ def save_data():
     return jsonify({"message": "Data saved successfully"})
 
 
+@app.route('/get-brand', methods=['GET'])
+def get_brand_data():
+    file_path = f'list.json'
+    with open(file_path) as json_file:
+        data = json.load(json_file)
+    return jsonify(data)
+
+
 if __name__ == '__main__':
     app.run()

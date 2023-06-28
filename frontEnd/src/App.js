@@ -1,7 +1,5 @@
 import React from "react";
 import { Route, Routes, Link } from "react-router-dom";
-import Redux from "./pages/Redux";
-import ApiCall from "./pages/ApiCall";
 import CMS from "./pages/CMS";
 import { site_text } from "./utils/languageMapper";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,8 +33,6 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<CMS />} />
-        <Route exact path="/redux" element={<Redux />} />
-        <Route exact path="/api" element={<ApiCall />} />
       </Routes>
     </>
   );

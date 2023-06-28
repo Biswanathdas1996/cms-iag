@@ -1,1 +1,6 @@
-{"dashboard": {"view_policy_button": "View Policy", "view_renewal_button": "Renewal Policy"}}
+{
+    "dashboard": {
+        "view_policy_button": "View Policy",
+        "view_renewal_button": "Renewal Policy"
+    }
+}
