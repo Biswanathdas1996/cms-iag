@@ -15,6 +15,10 @@ import Tab from "../components/Tab";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import HttpIcon from "@mui/icons-material/Http";
 
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -37,6 +41,10 @@ const JsonEditor = () => {
   const [brandList, setBrandList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  const [expanded, setExpanded] = React.useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedNodes, setExpandedNodes] = useState([]);
 
   const fetchBrandDataList = async () => {
     setLoading(true);
@@ -114,6 +122,40 @@ const JsonEditor = () => {
     return inputString.replace(/\./g, "/");
   }
 
+  const handleExpand = (event, nodeIds) => {
+    const nodeId = nodeIds.join("-");
+
+    setExpandedNodes((prevExpandedNodes) => {
+      if (prevExpandedNodes.includes(nodeId)) {
+        return prevExpandedNodes.filter((id) => id !== nodeId);
+      } else {
+        return [...prevExpandedNodes, nodeId];
+      }
+    });
+  };
+
+  const handleExpandAll = () => {
+    const allNodeIds = extractAllNodeIds(editedJsonData);
+    setExpandedNodes(allNodeIds);
+  };
+
+  const extractAllNodeIds = (data, nodeIds = [], path = "") => {
+    let allIds = [...nodeIds];
+
+    Object.keys(data).forEach((key) => {
+      const node = data[key];
+      const currentNodeIds = [...nodeIds, key];
+
+      if (typeof node === "object" && node !== null) {
+        allIds.push(currentNodeIds.join("-"));
+        const childIds = extractAllNodeIds(node, currentNodeIds);
+        allIds = allIds.concat(childIds);
+      }
+    });
+
+    return allIds;
+  };
+
   const renderTree = (data, nodeIds = [], path = "") => {
     return Object.keys(data).map((key) => {
       const node = data[key];
@@ -122,13 +164,45 @@ const JsonEditor = () => {
       const urlPath = path ? `${convertDotToSlashNotation(path)}` : key;
 
       if (typeof node === "object" && node !== null) {
+        const childNodes = renderTree(
+          node,
+          currentNodeIds,
+          currentPath,
+          urlPath
+        );
+
+        // Skip rendering if all child nodes are filtered out
+        if (childNodes.length === 0) {
+          return null;
+        }
+
+        const nodeId = currentNodeIds.join("-");
+        const isNodeExpanded = expandedNodes.includes(nodeId);
+
         return (
-          <TreeItem key={key} nodeId={currentNodeIds.join("-")} label={key}>
-            {renderTree(node, currentNodeIds, currentPath, urlPath)}
+          <TreeItem
+            key={key}
+            nodeId={nodeId}
+            label={key}
+            expanded={isNodeExpanded}
+            onLabelClick={(event) => handleExpand(event, currentNodeIds)}
+          >
+            {childNodes}
           </TreeItem>
         );
       }
 
+      const nodeValue = String(node);
+
+      // Filter the node value based on the search query
+      const isNodeValueMatching = nodeValue
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+      // Skip rendering if the node value doesn't match the search query
+      if (!isNodeValueMatching) {
+        return null;
+      }
       return (
         <TreeItem
           key={key}
@@ -192,6 +266,17 @@ const JsonEditor = () => {
       );
     });
   };
+
+  const handleExpandClick = () => {
+    setExpanded((oldExpanded) =>
+      oldExpanded.length === 0 ? extractAllNodeIds(editedJsonData) : []
+    );
+  };
+
+  const handleToggle = (event, nodeIds) => {
+    setExpanded(nodeIds);
+  };
+
   return (
     <>
       {isCopied && <Alert severity="success">Path copied!</Alert>}
@@ -207,17 +292,47 @@ const JsonEditor = () => {
               marginTop: 0,
             }}
           >
-            {brandList && (
-              <Tab brand={brand} setBrand={setBrand} brandList={brandList} />
-            )}
-
             {!loading ? (
               <>
+                <TextField
+                  label="Search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  style={{ marginBottom: "1rem" }}
+                />
+
+                {editedJsonData && editedJsonData != {} && (
+                  <Button
+                    variant="contained"
+                    color="info"
+                    onClick={handleExpandClick}
+                    style={{ marginBottom: "1rem", float: "right" }}
+                  >
+                    {expanded.length === 0 ? "Expand all" : "Collapse all"}
+                  </Button>
+                )}
+
+                {brandList && (
+                  <Tab
+                    brand={brand}
+                    setBrand={setBrand}
+                    brandList={brandList}
+                  />
+                )}
                 {editedJsonData && editedJsonData != {} ? (
                   <div className={classes.root}>
                     <TreeView
                       defaultCollapseIcon={<ExpandMoreIcon />}
                       defaultExpandIcon={<ChevronRightIcon />}
+                      expanded={expanded}
+                      onNodeToggle={handleToggle}
                     >
                       {renderTree(editedJsonData)}
                     </TreeView>
