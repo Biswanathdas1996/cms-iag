@@ -12,7 +12,8 @@ import swal from "sweetalert";
 import Chip from "@mui/material/Chip";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import Alert from "@mui/material/Alert";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import Tab from "../components/Tab";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -31,9 +32,18 @@ const JsonEditor = () => {
   const classes = useStyles();
   const [editedJsonData, setEditedJsonData] = useState({});
 
-  const [brand, setBrand] = useState("NRMA");
+  const [brand, setBrand] = useState(null);
+  const [brandList, setBrandList] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  const fetchBrandDataList = async () => {
+    setLoading(true);
+    const response = await get("/get-brand-list");
+    setBrandList(response);
+    console.log("==response==>", response);
+    setLoading(false);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -46,7 +56,11 @@ const JsonEditor = () => {
   };
 
   React.useEffect(() => {
-    fetchData();
+    fetchBrandDataList();
+  }, []);
+
+  React.useEffect(() => {
+    brand && fetchData();
   }, [brand]);
 
   const handleChange = (event, nodeIds) => {
@@ -78,8 +92,9 @@ const JsonEditor = () => {
     console.log("------", requestData);
     const response = await post("/save-data", requestData);
     if (response) {
-      swal("Updated!", "data updated!", "success");
-      fetchData();
+      swal("Updated!", "data updated!", "success").then((value) => {
+        fetchData();
+      });
     }
   };
 
@@ -161,20 +176,9 @@ const JsonEditor = () => {
               marginTop: 0,
             }}
           >
-            <Stack spacing={2} direction="row" style={{ marginBottom: 25 }}>
-              <Button
-                variant={brand === "NRMA" ? "contained" : "outlined"}
-                onClick={() => setBrand("NRMA")}
-              >
-                NRMA
-              </Button>
-              <Button
-                variant={brand === "ANZ" ? "contained" : "outlined"}
-                onClick={() => setBrand("ANZ")}
-              >
-                ANZ
-              </Button>
-            </Stack>
+            {brandList && (
+              <Tab brand={brand} setBrand={setBrand} brandList={brandList} />
+            )}
 
             {!loading ? (
               <div className={classes.root}>

@@ -1,7 +1,5 @@
-{
-    "tabs": [
-        "NRMA",
-        "ANZ",
-        "BNZ"
-    ]
-}
+[
+    "NRMA",
+    "ANZ",
+    "BNZ"
+]

@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes, Link } from "react-router-dom";
-import CMS from "./pages/CMS";
+import Home from "./pages/Home";
 import { site_text } from "./utils/languageMapper";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLanguage } from "./redux/slices/config/configSlice";
@@ -32,7 +32,7 @@ function App() {
       <Header />
 
       <Routes>
-        <Route exact path="/" element={<CMS />} />
+        <Route exact path="/" element={<Home />} />
       </Routes>
     </>
   );
