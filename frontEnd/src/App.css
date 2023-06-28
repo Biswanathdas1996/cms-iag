@@ -32,6 +32,24 @@ button {
     background-color: #3f51b5 !important;
 }
 
+
+.MuiTreeItem-content {
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px !important;
+  background: #8080801c !important;
+  border-radius: 8px !important;
+  margin-top: 5px !important;
+}
+
+.MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label {
+  background-color: rgb(63 81 181 / 0%) !important;;
+  
+}
+
+
   .loader {
     border: 10px solid #f3f3f3; /* Light grey */
     border-top: 10px solid #ad0004; /* Blue */

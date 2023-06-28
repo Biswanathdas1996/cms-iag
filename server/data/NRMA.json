@@ -1,1 +1,45 @@
-{"dashboard": {"view_policy_button": "View Policy details", "view_renewal_button": "Review Renewal NRMA"}}
+{
+    "SSC": {
+        "dashboard": {
+            "claims_header_text": "Claims",
+            "view_all_claim_text": "View all claims",
+            "quotes_header_text": "Quotes",
+            "view_all_quotes_text": "View all quotes",
+            "policy_list_header": "Policies",
+            "policy_list_sub_text": "NRMA insurance policy",
+            "policies": {
+                "policies_details_text": "Policy details",
+                "policy_number": "Policy number",
+                "car_text": "Car insurance policy",
+                "home_text": "Home insurance policy",
+                "motor_text": "Motor insurance policy",
+                "payment_paln": "Payment plan",
+                "policy_document": "Policy document",
+                "motor": {
+                    "asset_details": "Asset details",
+                    "car_details": "Car details",
+                    "car_usage": "Car usage",
+                    "optional_benifits": "Optional benefits"
+                }
+            }
+        }
+    },
+    "MTA": {
+        "header_text": "MTA"
+    },
+    "Renewals": {
+        "policyrenew": {
+            "policies": {
+                "home": {
+                    "view_renewal_button": "Renewal Policy anz",
+                    "sum_insured_text": "Sum insured",
+                    "edit_sum_insured_text": "Edit Sum insured",
+                    "sum_insured": {
+                        "header_text": "Your sum insured",
+                        "button": "edit details"
+                    }
+                }
+            }
+        }
+    }
+}

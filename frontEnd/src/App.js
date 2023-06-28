@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes, Link } from "react-router-dom";
 import Home from "./pages/Home";
+import Intigration from "./pages/Intigration";
 import { site_text } from "./utils/languageMapper";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLanguage } from "./redux/slices/config/configSlice";
@@ -33,6 +34,7 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<Home />} />
+        <Route exact path="/doc" element={<Intigration />} />
       </Routes>
     </>
   );
