@@ -19,6 +19,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 
+import _ from "lodash";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -36,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 const JsonEditor = () => {
   const classes = useStyles();
   const [editedJsonData, setEditedJsonData] = useState(null);
+  const [previewData, setPreviewData] = useState(null);
 
   const [brand, setBrand] = useState(null);
   const [brandList, setBrandList] = useState(null);
@@ -60,7 +63,7 @@ const JsonEditor = () => {
       brand_name: brand,
     });
     setEditedJsonData(response);
-    console.log("==response==>", response);
+    setPreviewData(response);
     setLoading(false);
   };
 
@@ -134,11 +137,6 @@ const JsonEditor = () => {
     });
   };
 
-  const handleExpandAll = () => {
-    const allNodeIds = extractAllNodeIds(editedJsonData);
-    setExpandedNodes(allNodeIds);
-  };
-
   const extractAllNodeIds = (data, nodeIds = [], path = "") => {
     let allIds = [...nodeIds];
 
@@ -186,6 +184,7 @@ const JsonEditor = () => {
             label={key}
             expanded={isNodeExpanded}
             onLabelClick={(event) => handleExpand(event, currentNodeIds)}
+            style={{ color: "black" }}
           >
             {childNodes}
           </TreeItem>
@@ -203,14 +202,16 @@ const JsonEditor = () => {
       if (!isNodeValueMatching) {
         return null;
       }
+      const isNodeExpanded = expandedNodes.includes(currentNodeIds.join("-"));
+
       return (
         <TreeItem
           key={key}
           nodeId={currentNodeIds.join("-")}
           label={key}
-          style={
-            typeof node != "object" ? { color: "#808b96" } : { color: "red" }
-          }
+          expanded={isNodeExpanded}
+          onLabelClick={(event) => handleExpand(event, currentNodeIds)}
+          style={{ color: "#808b96" }}
         >
           <Chip
             icon={<AccountTreeIcon />}
@@ -227,7 +228,7 @@ const JsonEditor = () => {
           />
           <Chip
             icon={<TextFieldsIcon />}
-            label={`${node}`}
+            label={`${_.get(previewData, currentPath, "")}`}
             style={{
               fontSize: 10,
               marginTop: 5,
@@ -294,19 +295,23 @@ const JsonEditor = () => {
           >
             {!loading ? (
               <>
-                <TextField
-                  label="Search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  style={{ marginBottom: "1rem" }}
-                />
+                {editedJsonData && (
+                  <TextField
+                    label="Search"
+                    value={searchQuery}
+                    onChange={(event) => {
+                      setSearchQuery(event.target.value);
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    style={{ marginBottom: "1rem" }}
+                  />
+                )}
 
                 {editedJsonData && editedJsonData != {} && (
                   <Button

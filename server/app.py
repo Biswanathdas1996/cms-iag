@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import json
+import utils
 
 app = Flask(__name__)
 
@@ -17,31 +18,44 @@ def get_data():
     requestData = request.json
     brand_name = requestData.get('brand_name')
     file_path = f'data/{brand_name}.json'
-
-    # Open the JSON file and load the data
     with open(file_path) as json_file:
         data = json.load(json_file)
-
-    # Return the data as a JSON response
     return jsonify(data)
+
+
+@app.route('/get-backup-data', methods=['POST'])
+def get_backup_data():
+    requestData = request.json
+    brand_name = requestData.get('brand_name')
+
+    file_names_json = utils.get_file_names(f"backup/{brand_name}")
+    print(file_names_json)
+
+    return jsonify(file_names_json)
 
 
 @app.route('/save-data', methods=['POST'])
 def save_data():
-    # Get the JSON data from the request body
-    # data = request.get_json()
+
     requestData = request.json
     brand_name = requestData.get('brand_name')
     file_data = requestData.get('data')
+    source_directory = "data"
+    file_to_copy = f"{brand_name}.json"
 
-    # Specify the file path where you want to save the JSON data
+    new_copy_filename = utils.copy_json_file(
+        source_directory,  brand_name, file_to_copy)
     file_path = f"data/{brand_name}.json"
-
-    # Open the file in write mode and use json.dump() to write the data
     with open(file_path, "w") as json_file:
         json.dump(file_data, json_file)
 
-    # Return a success message as the response
+    # ---------------------------------------------------------
+
+    output_file_path = utils.compare_json_files(
+        brand_name, f"backup/{brand_name}/{new_copy_filename}", f"data/{brand_name}.json")
+    print(f"Differences saved in: {output_file_path}")
+    # ------------------------------------------------------------------
+
     return jsonify({"message": "Data saved successfully"})
 
 
