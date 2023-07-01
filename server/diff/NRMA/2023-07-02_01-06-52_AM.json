@@ -3,8 +3,8 @@
         "change",
         "MTA.header_text",
         [
-            "MTA ",
-            "MTA  anz"
+            "MTA  new ",
+            "MTA  new  text updated"
         ]
     ]
 ]

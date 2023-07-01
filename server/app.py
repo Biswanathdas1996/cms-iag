@@ -23,15 +23,24 @@ def get_data():
     return jsonify(data)
 
 
-@app.route('/get-backup-data', methods=['POST'])
+@app.route('/get-diff-files', methods=['POST'])
 def get_backup_data():
     requestData = request.json
     brand_name = requestData.get('brand_name')
-
-    file_names_json = utils.get_file_names(f"backup/{brand_name}")
+    file_names_json = utils.get_file_names(f"diff/{brand_name}")
     print(file_names_json)
-
     return jsonify(file_names_json)
+
+
+@app.route('/get-diff-data', methods=['POST'])
+def get_diff_data():
+    requestData = request.json
+    file_name = requestData.get('file_name')
+    brand_name = requestData.get('brand_name')
+    file_path = f'diff/{brand_name}/{file_name}'
+    with open(file_path) as json_file:
+        data = json.load(json_file)
+    return jsonify(data)
 
 
 @app.route('/save-data', methods=['POST'])

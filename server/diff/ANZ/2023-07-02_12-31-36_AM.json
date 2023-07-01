@@ -1,0 +1,18 @@
+[
+    [
+        "change",
+        "MTA.header_text",
+        [
+            "MTA  anz",
+            "MTA "
+        ]
+    ],
+    [
+        "change",
+        "SSC.dashboard.policies.car_text",
+        [
+            "Car insurance policy",
+            "Car insurance policy g"
+        ]
+    ]
+]

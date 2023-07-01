@@ -18,7 +18,7 @@ import HttpIcon from "@mui/icons-material/Http";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-
+import History from "../components/History";
 import _ from "lodash";
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +49,8 @@ const JsonEditor = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedNodes, setExpandedNodes] = useState([]);
 
+  const [history, setHistory] = useState(null);
+
   const fetchBrandDataList = async () => {
     setLoading(true);
     const response = await get("/get-brand-list");
@@ -62,8 +64,18 @@ const JsonEditor = () => {
     const response = await post("/get-data", {
       brand_name: brand,
     });
+    fetchHistoryData();
     setEditedJsonData(response);
     setPreviewData(response);
+    setLoading(false);
+  };
+
+  const fetchHistoryData = async () => {
+    setLoading(true);
+    const response = await post("/get-diff-files", {
+      brand_name: brand,
+    });
+    setHistory(response);
     setLoading(false);
   };
 
@@ -364,6 +376,21 @@ const JsonEditor = () => {
               </center>
             )}
           </Card>
+
+          {brand && (
+            <Card
+              style={{
+                zIndex: 10,
+                position: "relative",
+                borderRadius: 12,
+                padding: "2.5rem",
+                margin: "2.5rem",
+                marginTop: 0,
+              }}
+            >
+              <History history={history} brand={brand} />
+            </Card>
+          )}
         </Grid>
       </Grid>
     </>

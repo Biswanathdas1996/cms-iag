@@ -1,0 +1,34 @@
+[
+    [
+        "change",
+        "MTA.header_text",
+        [
+            "MTA ",
+            "MTA  new text"
+        ]
+    ],
+    [
+        "change",
+        "Renewals.policyrenew.policies.home.edit_sum_insured_text",
+        [
+            "Edit Sum insured",
+            "Edit Sum insured new text"
+        ]
+    ],
+    [
+        "change",
+        "SSC.dashboard.claims_header_text",
+        [
+            "Claims",
+            "Claims new text"
+        ]
+    ],
+    [
+        "change",
+        "SSC.dashboard.policy_list_sub_text",
+        [
+            "NRMA insurance policy",
+            "NRMA insurance policy new"
+        ]
+    ]
+]

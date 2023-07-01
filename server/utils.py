@@ -38,7 +38,7 @@ def compare_json_files(brand_name, file1_path, file2_path):
 
     current_datetime = datetime.datetime.now()
     formatted_datetime = current_datetime.strftime('%Y-%m-%d_%I-%M-%S_%p')
-    new_filename = f"{formatted_datetime}.json"
+    new_filename = f"{formatted_datetime}"
 
     output_path = f"diff/{brand_name}/{new_filename}.json"
     with open(output_path, 'w') as output_file:
