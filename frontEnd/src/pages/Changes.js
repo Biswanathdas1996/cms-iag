@@ -3,23 +3,25 @@ import { useParams } from "react-router-dom";
 import { get, post } from "../helper/apiHelper";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
 
 const JsonView = ({ data }) => {
   return (
     <div>
       {data.map((item, index) => (
         <div key={index}>
-          <h4>{item[0]}</h4>
-          <p>{item[1]}</p>
+          <Typography variant="body1">
+            <b>{item[1]}</b>
+          </Typography>
           <ul>
             {item[2].map((value, idx) => (
-              <p key={idx}>
+              <Typography variant="body1" gutterBottom key={idx}>
                 {" "}
                 <b style={{ color: "#3f51b5" }}>
                   {idx === 0 ? "Old text" : "New text"}:
                 </b>{" "}
                 {value}
-              </p>
+              </Typography>
             ))}
           </ul>
         </div>
